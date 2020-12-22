@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import actions from '../../data/actions';
+import actions from '@/data/actions';
 import CustomSelect from '../CustomSelect.vue';
 
 export default {
@@ -44,8 +44,9 @@ export default {
         delay: null,
         time: null,
         source: null,
+        intr: null,
       },
-      hasInput: ['value', 'delay', 'time'],
+      hasInput: ['value', 'delay', 'time', 'intr'],
     };
   },
   computed: {

@@ -27,8 +27,8 @@
 </template>
 
 <script>
+import actionsList from '@/data/actions';
 import Action from './Action.vue';
-import actionsList from '../../data/actions';
 
 export default {
   props: ['init', 'objects', 'allDevices'],

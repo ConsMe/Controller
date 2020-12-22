@@ -42,27 +42,39 @@ export default {
       date: null,
       ver: null,
       moment,
+      ext: process.env.VUE_APP_IS_TEST === '1' ? '.php' : '',
     };
   },
   created() {
     this.moment.locale('ru');
-    axios.post('/api/info.php')
-      .then((r) => {
-        this.id = r.data.id;
-        this.name = r.data.name;
-        const t = r.data.time;
-        const formattedTime = `${t.year}-${t.mon}-${t.day} ${t.hour}:${t.min}`;
-        const parsed = this.moment(formattedTime, 'YYYY-M-D H:m');
-        // console.log(parsed);
-        this.hours = parsed.format('HH');
-        this.minutes = parsed.format('mm');
-        const day = parsed.format('dddd');
-        this.day = `${day.slice(0, 1).toUpperCase()}${day.slice(1)}`;
-        const date = parsed.format('DD MMMM').split(' ');
-        this.date = `${date[0]} ${date[1].slice(0, 1).toUpperCase()}${date[1].slice(1)}`;
-        // this.date = date;
-        this.ver = r.data.ver;
-      });
+    this.getInfo();
+    setInterval(() => {
+      this.getInfo();
+    }, 10000);
+  },
+  methods: {
+    getInfo() {
+      axios.post(`/api/info${this.ext}`)
+        .then((r) => {
+          if (typeof r.data !== 'object' || r.data === null) return;
+          if ('id' in r.data) this.id = r.data.id;
+          if ('id' in r.data) this.name = r.data.name;
+          if ('ver' in r.data) this.ver = r.data.ver;
+          if (typeof r.data.time !== 'object' || r.data.time === null) return;
+          const t = r.data.time;
+          if (!('year' in t) || !('mon' in t) || !('day' in t) || !('hour' in t) || !('min' in t)) {
+            return;
+          }
+          const formattedTime = `${t.year}-${t.mon}-${t.day} ${t.hour}:${t.min}`;
+          const parsed = this.moment(formattedTime, 'YYYY-M-D H:m');
+          this.hours = parsed.format('HH');
+          this.minutes = parsed.format('mm');
+          const day = parsed.format('dddd');
+          this.day = `${day.slice(0, 1).toUpperCase()}${day.slice(1)}`;
+          const date = parsed.format('DD MMMM').split(' ');
+          this.date = `${date[0]} ${date[1].slice(0, 1).toUpperCase()}${date[1].slice(1)}`;
+        });
+    },
   },
 };
 </script>

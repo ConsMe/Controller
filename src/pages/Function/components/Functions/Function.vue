@@ -48,6 +48,7 @@ export default {
     'name',
     'index',
     'hasNoFloat',
+    'ext',
   ],
   components: {
     Trigger,
@@ -74,7 +75,7 @@ export default {
       if (this.disabled) return;
       const func = this.prepareFunc();
       if (!func) return;
-      axios.post('/api/add_func.php', func)
+      axios.post(`/api/add_func${this.ext}`, func)
         .then((r) => {
           if (r.data.status === 'error') {
             this.$toasted.error(this.err, { duration: 5000 });

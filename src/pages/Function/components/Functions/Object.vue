@@ -18,14 +18,14 @@
       @change="addr = $event"
       :options="addrs"
       :valueInit="addr"
-      header="Вход/выход"
+      :header="addressInputName"
       class="select1 mini" />
   </div>
 </template>
 
 <script>
+import hasComlplexAddr from '@/data/hasComplexAddr';
 import CustomSelect from '../CustomSelect.vue';
-import hasComlplexAddr from '../../data/hasComplexAddr';
 
 export default {
   props: ['init', 'objects', 'allDevices', 'index'],
@@ -51,16 +51,22 @@ export default {
     },
     addrs() {
       if (this.type === 'var') {
-        return new Array(33).fill({}).map((_, i) => ({ value: i, label: i }));
+        return new Array(33).fill({}).map((_, i) => ({ value: i, label: i + 1 }));
       }
       if (this.device === null) return [];
       const device = this.allDevices.find((d) => d.addr === this.device);
       const { devName } = this.objectFull;
       if (!device || !device[devName]) return [];
       if (this.hasComlplexAddr.includes(devName)) {
-        return device[devName].map((d) => ({ label: d, value: d }));
+        return device[devName].map((d) => ({ label: d.label, value: d.value }));
       }
-      return new Array(device[devName]).fill({}).map((_, i) => ({ value: i, label: i }));
+      return new Array(device[devName]).fill({}).map((_, i) => (
+        {
+          value: i,
+          label: device.label && device.label[this.type] && device.label[this.type][i]
+            && device.label[this.type][i].length ? device.label[this.type][i] : i + 1,
+        }
+      ));
     },
     obj() {
       return {
@@ -68,6 +74,11 @@ export default {
         device: this.device,
         addr: this.addr,
       };
+    },
+    addressInputName() {
+      if (this.type === 'var') return 'Номер';
+      if (this.hasComlplexAddr.includes(this.type)) return 'Адрес';
+      return 'Вход/выход';
     },
   },
   watch: {

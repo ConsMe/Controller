@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import triggers from '../../data/triggers';
+import triggers from '@/data/triggers';
 import CustomSelect from '../CustomSelect.vue';
 
 export default {

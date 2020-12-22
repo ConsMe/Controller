@@ -109,7 +109,7 @@ export default {
 /* Style the arrow inside the select element: */
 .select-selected::after, .select-native::after {
   content: "";
-  background: url(../assets/patch.svg);
+  background: url(~@/assets/patch.svg);
   width: 9px;
   height: 5px;
   position: absolute;

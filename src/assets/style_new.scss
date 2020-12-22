@@ -1,3 +1,15 @@
+@font-face {
+	font-family: "Montserrat";
+	src: url("./fonts/Montserrat-Medium.ttf") format('truetype');
+	font-weight: 500;
+	font-style: normal;
+}
+@font-face {
+	font-family: "Montserrat";
+	src: url("./fonts/Montserrat-SemiBold.ttf") format('truetype');
+	font-weight: 600;
+	font-style: normal;
+}
 body {
 	margin: 0 auto;
 	background-color: #f1f5fe;
@@ -450,9 +462,9 @@ input:focus {
 .edit__input:focus {
 	opacity: 1;
 }
-.panel__table_1 .table__colum {
-	flex: 0 0 36.5%;
-}
+// .panel__table_1 .table__colum {
+// 	flex: 0 0 36.5%;
+// }
 .table__colum_right {
 	flex: 0 0 27%!important;
 }
@@ -788,7 +800,7 @@ width: 4px;
 }
 .function__button:before {
 	content: "";
-	background: url("/img/plus.svg");
+	background: url("~@/assets/plus.svg");
 	width: 17px;
 	height: 17px;
 	margin-right: 6px;
@@ -836,7 +848,7 @@ width: 4px;
 }
 .popup__butt1:before {
 	content: "";
-	background: url("/img/plus.svg");
+	background: url("~@/assets/plus.svg");
 	width: 17px;
 	height: 17px;
 	margin-right: 6px;
@@ -973,7 +985,7 @@ width: 4px;
 }
 .select:after {
 	content: "";
-    background: url(/img/patch.svg);
+    background: url('./patch.svg');
     width: 9px;
     height: 5px;
     position: absolute;
@@ -1571,7 +1583,7 @@ input.login__input::placeholder {
 	}
 	.nav__name:after {
 		content: "";
-		background: url('/img/patch.svg') no-repeat;
+		background: url('./patch.svg') no-repeat;
 		width: 16px;
 		height: 8px;
 		position: absolute;
@@ -1681,9 +1693,9 @@ input.login__input::placeholder {
 		margin-right: -2px;
 		margin-left: auto;
 	}
-	.panel__table_1 .table__colum {
-		flex: 0 0 33.333%;
-	}
+	// .panel__table_1 .table__colum {
+	// 	flex: 0 0 33.333%;
+	// }
 	.table__colum_ri {
 		text-align: right;
 	}

@@ -22,9 +22,9 @@
 </template>
 
 <script>
+import actionsList from '@/data/actions';
 import ObjectBlock from './Object.vue';
 import Act from './Act.vue';
-import actionsList from '../../data/actions';
 
 export default {
   props: ['objects', 'allDevices', 'init', 'index', 'objectsForActions'],
@@ -40,12 +40,13 @@ export default {
       delay: null,
       time: null,
       source: null,
+      intr: null,
     };
   },
   computed: {
     action() {
       const action = {};
-      ['object', 'act', 'value', 'delay', 'time', 'source'].forEach((p) => {
+      ['object', 'act', 'value', 'delay', 'time', 'source', 'intr'].forEach((p) => {
         action[p] = this[p];
       });
       return action;
@@ -58,6 +59,7 @@ export default {
           delay: (this.init.delay || this.init.delay === 0) ? this.init.delay : null,
           time: (this.init.time || this.init.time === 0) ? this.init.time : null,
           source: this.init.source || null,
+          intr: (this.init.intr || this.init.intr === 0) ? this.init.intr : null,
         };
       }
       return null;

@@ -66,7 +66,7 @@ export default [
             label: 'Задержка',
           },
           {
-            value: 'time',
+            value: 'intr',
             label: 'Время',
           },
         ],

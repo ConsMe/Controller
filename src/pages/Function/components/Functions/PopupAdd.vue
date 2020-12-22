@@ -1,8 +1,8 @@
 <template>
-  <div class="popup1" v-show="isShown">
+  <div class="popup1" v-show="isShown" @click="isShown = false">
     <div class="popup__modal1">
       <div class="popup__hed1">Добавить функцию</div>
-      <div class="popup__flex1">
+      <div class="popup__flex1" @click.stop>
         <input
           type="text"
           class="popup__input1 input"

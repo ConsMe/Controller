@@ -7,11 +7,11 @@
 </template>
 
 <script>
-import './assets/reset_new.css';
-import './assets/style_new.scss';
-import './assets/tooltip.scss';
-import LeftSideBar from './components/LeftSideBar.vue';
-import HeaderComp from './components/Header.vue';
+import '@/assets/reset_new.css';
+import '@/assets/style_new.scss';
+import '@/assets/tooltip.scss';
+import LeftSideBar from '@/components/LeftSideBar.vue';
+import HeaderComp from '@/components/Header.vue';
 import Functions from './components/Functions/FunctionsList.vue';
 
 export default {

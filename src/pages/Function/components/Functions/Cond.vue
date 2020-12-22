@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import conditions from '../../data/conditions';
+import conditions from '@/data/conditions';
 import CustomSelect from '../CustomSelect.vue';
 
 export default {

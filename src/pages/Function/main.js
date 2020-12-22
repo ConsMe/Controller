@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VTooltip from 'VTooltip';
+import VTooltip from 'v-tooltip';
 import Toasted from 'vue-toasted';
 import App from './App.vue';
 

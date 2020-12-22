@@ -17,7 +17,7 @@
       <div
         v-for="(init, i) in funcsInit"
         :key="i"
-        v-show="!init || !init.isDeleted"
+        v-show="init && !init.isDeleted"
         class="function__row">
         <div class="function__hed" @click="toggleVisibility(init)">
           <div class="function__name">
@@ -48,7 +48,8 @@
             :isVisible="init ? visibility[init.fname] : false"
             :name="init ? init.fname : ''"
             :index="i"
-            :hasNoFloat="hasNoFloat" />
+            :hasNoFloat="hasNoFloat"
+            :ext="ext" />
         </div>
       </div>
     </div>
@@ -56,16 +57,16 @@
 </template>
 
 <script>
+import axios from 'axios';
+import allObjects from '@/data/objects';
+import hasComplexAddr from '@/data/hasComplexAddr';
+import hasNoFloat from '@/data/hasNoFloat';
 import EditImg from '../img/EditImg.vue';
 import DeleteImg from '../img/DeleteImg.vue';
 import ExpandImg from '../img/ExpandImg.vue';
 import Function from './Function.vue';
 import PopupAdd from './PopupAdd.vue';
 import PopupDelete from './PopupDelete.vue';
-import allObjects from '../../data/objects';
-import hasComlplexAddr from '../../data/hasComplexAddr';
-
-const { axios } = window;
 
 export default {
   components: {
@@ -83,22 +84,23 @@ export default {
       objects: [],
       allDevices: [],
       canApply: false,
-      hasComlplexAddr,
+      hasComplexAddr,
       visibility: {},
       showPopupAddTrigger: null,
       showPopupDelTrigger: null,
       deleteFuncIndex: null,
-      hasNoFloat: ['opwm', 'odac', 'iadc', 'itmp'],
+      hasNoFloat,
+      ext: process.env.VUE_APP_IS_TEST === '1' ? '.php' : '',
     };
   },
   created() {
-    axios.post('/api/get_flist.php')
+    axios.post(`/api/get_flist${this.ext}`)
       .then((r) => {
         this.funcsNames = r.data.func_names;
         this.funcsInit = new Array(r.data.func_names.length).fill(null);
         this.getAllFuncs();
       });
-    axios.post('/api/devlist.php')
+    axios.post(`/api/devlist${this.ext}`)
       .then((r) => {
         const objects = this.clone(allObjects);
         r.data.devices.forEach((d) => {
@@ -109,7 +111,7 @@ export default {
               objects[i].devices.push({ value: d.addr, label: d.addr });
             }
           });
-          this.hasComlplexAddr.forEach((h) => {
+          this.hasComplexAddr.forEach((h) => {
             delete device[h];
           });
           this.getDevice(device);
@@ -125,29 +127,59 @@ export default {
       });
     },
     getFunc(index) {
-      axios.post('/api/get_func.php', { function: index })
+      axios.post(`/api/get_func${this.ext}`, { function: index })
         .then((r) => {
           const func = this.transformData(r.data);
           this.$set(this.funcsInit, index, func);
         });
     },
     getDevice(device) {
-      axios.post('/api/state.php', { device: device.addr })
+      // axios.post(`/api/state${this.ext}`, { device: device.addr })
+      //   .then((r) => {
+      //     const addrs = {};
+      //     this.hasComplexAddr.forEach((a) => {
+      //       if (!r.data[a]) return;
+      //       r.data[a].forEach((addr) => {
+      //         if (!(a in addrs)) addrs[a] = [];
+      //         if (typeof addr === 'string') {
+      //           addrs[a].push(addr);
+      //         } else {
+      //           addrs[a].push(...Object.keys(addr));
+      //         }
+      //       });
+      //     });
+      //     Object.assign(device, addrs);
+      //   });
+      this.allDevices.push(device);
+      this.getWireAddresses(device, this.allDevices.length - 1);
+    },
+    getWireAddresses(device, index) {
+      axios.post(`/api/get_wlist${this.ext}`, { device: device.addr })
         .then((r) => {
-          const addrs = {};
-          this.hasComlplexAddr.forEach((a) => {
-            if (!r.data[a]) return;
-            r.data[a].forEach((addr) => {
-              if (!(a in addrs)) addrs[a] = [];
-              if (typeof addr === 'string') {
-                addrs[a].push(addr);
-              } else {
-                addrs[a].push(...Object.keys(addr));
-              }
+          const addrs = r.data;
+          axios.post(`/api/get_label${this.ext}`, { device: device.addr })
+            .then((r2) => {
+              const labels = r2.data;
+              this.hasComplexAddr.forEach((k) => {
+                if (addrs[k] && addrs[k].length) {
+                  const addrsLabels = addrs[k].map((a, i) => (
+                    {
+                      value: a,
+                      label: labels[k] && labels[k][i] && labels[k][i].length ? labels[k][i] : a,
+                    }
+                  ));
+                  this.$set(this.allDevices[index], k, addrsLabels);
+                } else {
+                  this.$set(this.allDevices[index], k, []);
+                }
+              });
+              const otherLabels = {};
+              Object.keys(labels).forEach((k) => {
+                if (this.hasComplexAddr.includes(k) || k === 'device') return;
+                otherLabels[k] = labels[k];
+              });
+              this.$set(this.allDevices[index], 'label', otherLabels);
             });
-          });
-          Object.assign(device, addrs);
-          this.allDevices.push(device);
         });
     },
     toggleVisibility(func) {
@@ -183,10 +215,10 @@ export default {
       this.showPopupDelTrigger = Math.random();
     },
     delFunc(index) {
-      axios.post('/api/get_flist.php', { function: index })
+      axios.post(`/api/get_flist${this.ext}`, { function: index })
         .then((r) => {
           const i = r.data.func_names.findIndex((f) => f === this.funcsNames[index]);
-          axios.post('/api/del_func.php', { function: i })
+          axios.post(`/api/del_func${this.ext}`, { function: i })
             .then(() => {
               this.$set(this.funcsInit[index], 'isDeleted', true);
             });
